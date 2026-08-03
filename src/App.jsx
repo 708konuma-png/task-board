@@ -1,8 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const STORAGE_KEY = 'task-board-tasks';
+
+const loadTasks = () => {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  try {
+    const savedTasks = window.localStorage.getItem(STORAGE_KEY);
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  } catch {
+    return [];
+  }
+};
 
 function App() {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(loadTasks);
   const [input, setInput] = useState('');
+
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
 
   const addTask = (event) => {
     event.preventDefault();
